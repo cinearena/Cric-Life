@@ -1,343 +1,63 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" type="image/x-icon" href="faviconimg.jpeg">
     <title>Streaming by Asif Ansari</title>
-     <link rel="shortcut icon" type="image/x-icon" href="faviconimg.jpeg">
-    <!-- Shaka Player UI compiled library -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.12.5/shaka-player.ui.min.js"></script>
-    <!-- Shaka Player UI compiled library default CSS -->
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.12.5/controls.min.css">
-    <!-- Chromecast SDK (optional for Chromecast support) -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="stylesheet" href="https://xyzts.pages.dev/style.css">
+    <script src="//content.jwplatform.com/libraries/SAHhwvZq.js"></script>
     <style>
-      #live-label {
-        position: absolute;
-        top: 5px;
-        left: 5px;
-        font-size: 10px; /* Default font size for larger screens */
-        color: white;
-        background-color: rgba(0, 0, 0, 0.4);
-        padding: 4px 8px;
-        border-radius: 5px;
-        display: none;
-        z-index: 10;
+      body {
+        margin: 0px;
+        padding-top: 5px;
+        font-family: Arial, sans-serif;
+        width: 100%;
       }
 
-      #live-label a {
-        color: white;
-        text-decoration: none;
-        font-weight: bold;
+      #jwplayerDiv {
+        width: 100%;
+        height: 100%;
+        position: relative; /* This makes the live label position relative to the video player */
       }
 
-      /* For screens larger than 768px (laptops, desktops) */
-      @media (min-width: 768px) {
-        #live-label {
-          font-size: 8px;
-          padding: 5px 10px;
-        }
-      }
-
-      /* For smaller screens (mobiles) */
-      @media (max-width: 767px) {
-        #live-label {
-          font-size: 5px;
-          padding: 2px 4px;
-          top: 3px;
-          left: 3px;
-        }
-      }
-
-      /* Popup styles */
-        .popup {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: #1c1c1c;
-            border-radius: 20px; /* Rounded card style */
-            padding: 20px;
-            text-align: center;
-            box-shadow: 0px 0px 15px rgba(255, 255, 255, 0.2);
-            z-index: 1002;
-            width: 90%;
-            max-width: 400px;
-            animation: fadeIn 0.5s;
-        }
-
-        .popup h2 {
-            color: #ffcc00;
-            margin-bottom: 10px;
-            font-size: 20px;
-        }
-
-        .popup p {
-            margin-bottom: 20px;
-            color: #ccc;
-            font-size: 16px;
-        }
-
-        .popup button {
-            background-color: #0088cc;
-            color: #fff;
-            border: none;
-            padding: 10px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            margin-bottom: 10px;
-            width: 100%;
-        }
-
-        .popup button:hover {
-            background-color: #006699;
-        }
-
-        .popup .close-btn {
-            background-color: #555;
-        }
-
-        .popup .close-btn:hover {
-            background-color: #333;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
-        }
-
-      .neon-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding-top: 5px;
-            padding-bottom:25px;
-            margin: 10px;
-            margin-top: 25px;
-            background-color: #2f2f2f;
-            border-radius: 10px;
-            box-shadow: 0 0 10px #00ff99;
-            transition: all 0.3s ease-in-out;
-            animation: neonBorder 2s infinite alternate;
-        }
-
-        .neon-container h1 {
-            color: #fff;
-            font-size: 2.5rem;
-            margin-bottom: 15px;
-            letter-spacing: 2px;
-        }
-
-        .neon-container a {
-            color: #00ff99;
-            font-size: 1.5rem;
-            text-decoration: none;
-            font-weight: bold;
-            border: 2px solid #00ff99;
-            padding: 10px 20px;
-            border-radius: 5px;
-            transition: all 0.3s ease-in-out;
-        }
-
-        .neon-container a:hover {
-            background-color: #00ff99;
-            color: #121212;
-            box-shadow: 0 0 20px #00ff99, 0 0 40px #00ff99;
-        }
-
-        /* Neon Border Animation */
-        @keyframes neonBorder {
-            0% {
-                border-color: #00ff99;
-            }
-            25% {
-                border-color: #ff007f;
-            }
-            50% {
-                border-color: #007fff;
-            }
-            75% {
-                border-color: #ffbf00;
-            }
-            100% {
-                border-color: #00ff99;
-            }
-        }
-
-       
-
-        /* Responsive Styles */
-        @media (max-width: 768px) {
-            .neon-container h1 {
-                font-size: 2rem;
-            }
-
-            .neon-container a {
-                font-size: 1.2rem;
-                padding: 8px 16px;
-            }
-        }
-   
+     
     </style>
   </head>
   <body>
-    <div data-shaka-player-container style="max-width:100%">
-      <video autoplay data-shaka-player id="video" style="width:100%;height:100%; background-color:black;"></video>
-      <div id="live-label">
-        <center><a href="https://t.me/+ESR7kTRkAHI1NTI1">CRIC <br> STREAM</a></center>
-      </div>
+    <div id="jwplayerDiv">
     </div>
 
-    <script>
-      const manifestUri = 'https://cricstream4u.github.io/jwmpd/?https://ev-fast-mpd.starzplayarabia.com/live/eds/CricLifeMax/DASH/CricLifeMax.mpd';
-
-      async function init() {
-        const video = document.getElementById('video');
-        const ui = video['ui'];
-        const controls = ui.getControls();
-        const player = controls.getPlayer();
-
-        // DRM Configuration with ClearKey
-        const clearKeyConfig = {
-          'ad59b720bd4b44d063686212b99484b5': 'e1744990edf98acc729c0773a3766583'
-        };
-
-        // Shaka Player UI Configuration (Remove progress and add "Live" label)
-        const config = {
-          'controlPanelElements': ['play_pause', 'spacer', 'mute', 'quality','language','picture_in_picture', 'fullscreen']
-        };
-
-        ui.configure(config);
-
-        // Configure DRM
-        player.configure({
-          drm: {
-            clearKeys: clearKeyConfig
+    <script type="text/javascript">
+      
+      jwplayer("jwplayerDiv").setup({
+        file: "https://cricstream4u.github.io/jwmpd/?https://ottb.live.cf.ww.aiv-cdn.net/lhr-nitro/live/clients/dash/enc/bsaaetko8v/out/v1/bd3b0c314fff4bb1ab4693358f3cd2d3/cenc.mpd",
+        position: 'bottom',
+        type: "dash",
+        drm: {
+          "clearkey": {
+            "keyId": "5deb190b1dac28e46c0bdada7668b7de",
+            "key": "ddd2b372702e42b0d2708a70b91dec8d"
           }
-        });
-
-        // Attach player and UI to the window to make it easy to access in the JS console.
-        window.player = player;
-        window.ui = ui;
-
-        // Listen for error events.
-        player.addEventListener('error', onPlayerErrorEvent);
-        controls.addEventListener('error', onUIErrorEvent);
-
-        // Show "Live" label when the stream is live
-        const liveLabel = document.getElementById('live-label');
-        liveLabel.style.display = 'block';
-
-        // Try to load the manifest.
-        try {
-          await player.load(manifestUri);
-          console.log('The video has now been loaded!');
-        } catch (error) {
-          onPlayerError(error);
-        }
-
-        // Detect when controls are visible and show/hide the live label
-        const controlPanel = document.querySelector('.shaka-controls');
+        },
         
-        controlPanel.addEventListener('mouseenter', () => {
-          liveLabel.style.display = 'block';  // Show the "Live" label when controls are visible
-        });
+        image: "WhatsApp Image 2025-02-22 at 5.19.53 PM.jpeg" // Replace with your thumbnail image URL
 
-        controlPanel.addEventListener('mouseleave', () => {
-          liveLabel.style.display = 'none';  // Hide the "Live" label when controls are hidden
-        });
-      }
-
-      function onPlayerErrorEvent(errorEvent) {
-        // Extract the shaka.util.Error object from the event.
-        onPlayerError(errorEvent.detail);
-      }
-
-      function onPlayerError(error) {
-        // Handle player error
-        console.error('Error code', error.code, 'object', error);
-      }
-
-      function onUIErrorEvent(errorEvent) {
-        // Extract the shaka.util.Error object from the event.
-        onPlayerError(errorEvent.detail);
-      }
-
-      function initFailed(errorEvent) {
-        console.error('Unable to load the UI library!');
-      }
-
-      // Listen to the custom shaka-ui-loaded event, to wait until the UI is loaded.
-      document.addEventListener('shaka-ui-loaded', init);
-      document.addEventListener('shaka-ui-load-failed', initFailed);
-
-     
+      });
     </script>
 
-     <script>
-        // Restrict iframe embedding
-        if (window.top !== window.self) {
-            window.addEventListener('DOMContentLoaded', function() {
-                document.body.innerHTML = '<div id="message"></div>';
-            });
-        }
+    <center>
+      <!-- BEGIN: Powered by Supercounters.com -->
+      <center><script type="text/javascript" src="//widget.supercounters.com/ssl/online_t.js"></script><script type="text/javascript">sc_online_t(1707487,"Users Online","170ddb");</script><br><noscript><a href="https://www.supercounters.com/">supercounters.com</a></noscript>
+      </center>
+      <!-- END: Powered by Supercounters.com -->
+    </center>
 
-        // Display a modern pop-up message when the page starts
-        window.addEventListener("load", function() {
-            // Create the popup element
-            var popup = document.createElement("div");
-            popup.className = "popup";
-
-            // Set the popup content
-            popup.innerHTML = `
-              <h2>Support Us!</h2>
-              <p>Join our Telegram channel <br>Cric_Stream official for more updates.</p>
-              <button id="joinButton">Join Now</button>
-              <button id="closeButton" class="close-btn">Already Joined</button>
-            `;
-
-            // Append the popup to the body
-            document.body.appendChild(popup);
-
-            // Add click event to the Join Now button
-            document.getElementById("joinButton").addEventListener("click", function() {
-                window.location.href = "https://t.me/cric_stream";
-            });
-
-            // Add click event to the Already Joined button to close the popup
-            document.getElementById("closeButton").addEventListener("click", function() {
-                document.body.removeChild(popup);
-            });
-        });
-    </script>
-    
-     <center>
-           <!-- BEGIN: Powered by Supercounters.com -->
-        <center><script type="text/javascript" src="//widget.supercounters.com/ssl/online_t.js"></script><script type="text/javascript">sc_online_t(1707487,"Users Online","170ddb");</script><br><noscript><a href="https://www.supercounters.com/">supercounters.com</a></noscript>
-        </center>
-        <!-- END: Powered by Supercounters.com -->
-
-        </center>
-
-        <div style="background-color: #0074d9; text-align: center; padding: 10px;">
-            <a href="https://t.me/cine_arena target="_blank">
-                <button id="joinTelegramButton">Join Telegram</button>
-            </a>
-        </div>
+    <div style="background-color: #0074d9; text-align: center; padding: 10px;">
+      <a href="https://t.me/cine_arena" target="_blank">
+        <button id="joinTelegramButton">Join Telegram</button>
+      </a>
     </div>
-
-
-     <div class="neon-container">
-        <div>
-            <h1>For Advertisement Contact Us!</h1>
-            <a href="https://t.me/asif4br" target="_blank">Click to Connect</a>
-        </div>
-    </div>
-
-    
   </body>
 </html>
